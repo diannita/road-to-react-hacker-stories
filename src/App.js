@@ -1,18 +1,50 @@
 import * as React from "react";
 
-function getByTitle(title) {
-  return title;
-}
+const list = [
+  {
+    title: "React",
+    url: "https://reactjs.org",
+    author: "Jordan Walke",
+    num_comments: 3,
+    points: 4,
+    objectID: 0,
+  },
+  {
+    title: "Redux",
+    url: "https://redux.js.org",
+    author: "Dan Abramov, Andrew Clark",
+    num_comments: 2,
+    points: 5,
+    objectID: 1,
+  },
+];
 
 function App() {
+  const listItems = list.map(function (item) {
+    return (
+      <li key={item.objectID}>
+        {/* {item.title} */}
+        <span>
+          <a href="{item.url}">{item.title + `  `}</a>
+        </span>
+        <span>{item.author}</span>
+        <span>{item.num_comments}</span>
+        <span>{item.points}</span>
+      </li>
+    );
+  });
+
   return (
     <div>
-      <h1>Hello {getByTitle("world")}</h1>
-
+      <h1>My Hacker Stories</h1>
       <label htmlFor="search" className="b-search">
         Search:{" "}
       </label>
       <input id="search" type="text"></input>
+      <hr />
+
+      {/*Render the list */}
+      <ul>{listItems}</ul>
     </div>
   );
 }
