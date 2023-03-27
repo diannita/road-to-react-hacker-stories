@@ -20,48 +20,30 @@ function App() {
     },
   ];
 
-  const javascriptLibraries = [
-    {
-      title: "jQuery ",
-      url: "https://jquery.org ",
-      author: "Jonh Resig",
-      num_comments: 5,
-      points: 10,
-      objectID: 2,
-    },
-    {
-      title: "Angular ",
-      url: "https://angularjs.org ",
-      author: "Google ",
-      num_comments: 4,
-      points: 8,
-      objectID: 3,
-    },
-  ];
+  const handleSearch = (event) => {
+    console.log(event.target.value);
+  };
 
   return (
     <div>
       <h1>My Hacker Stories</h1>
 
       <hr />
-      <Search />
+
+      <Search onSearch={handleSearch} />
+
       <hr />
-      <List list={stories} title="React Ecosystem" />
-      <List list={javascriptLibraries} title="Javascrip Libraries" />
+      <List list={stories} />
     </div>
   );
 }
 
-function Search() {
+function Search(props) {
   const [searchTerm, setSearchTerm] = React.useState("");
 
-  console.log(`rendering search with searchTerm: ${searchTerm}`);
-
   const handleChange = (event) => {
-    console.log(`Before setting searchTerm: ${searchTerm}`);
     setSearchTerm(event.target.value);
-    // console.log(event.target.value);
-    console.log(`After setting searchTerm: ${searchTerm}`);
+    props.onSearch(event);
   };
 
   return (
