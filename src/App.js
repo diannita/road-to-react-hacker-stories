@@ -80,10 +80,24 @@ let List = () => {
 };
 
 function Search() {
+  const handlerChange = (event) => {
+    console.log(event);
+    // return undefined;
+  };
+
+  const handleMouseOver = (event) => {
+    console.log(event);
+  };
+
   return (
     <div>
       <label htmlFor="search">Search: </label>
-      <input id="search" type="text" />
+      <input
+        id="search"
+        type="text"
+        onChange={handlerChange}
+        onMouseOver={handleMouseOver}
+      />
     </div>
   );
 }
