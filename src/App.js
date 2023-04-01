@@ -81,7 +81,7 @@ function List(props) {
       <h2>{props.title}</h2>
       <ul>
         {props.list.map(function (item) {
-          return <Item item={item} />;
+          return <Item key={item.objectID} item={item} />;
         })}
       </ul>
     </div>
