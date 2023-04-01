@@ -41,7 +41,11 @@ function App() {
 
       <hr />
 
-      <Search onSearch={handleSearch} searchTerm={searchTerm} />
+      <Search
+        search={searchTerm}
+        onSearch={handleSearch}
+        searchTerm={searchTerm}
+      />
 
       <hr />
       <List list={searchedStories} />
@@ -57,7 +61,12 @@ function Search(props) {
   return (
     <div>
       <label htmlFor="search">Search: </label>
-      <input id="search" type="text" onChange={handleChange} />
+      <input
+        id="search"
+        type="text"
+        value={props.search}
+        onChange={handleChange}
+      />
 
       <p>
         searching for <strong>{props.searchTerm}</strong>
