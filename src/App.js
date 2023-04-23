@@ -20,13 +20,31 @@ function App() {
     },
   ];
 
-  const [searchTerm, setSearchTerm] = React.useState(
-    localStorage.getItem("search") || "React"
-  );
+  // NOT USED - replace by custom hook (useSemiPersistentState)
+  // const [searchTerm, setSearchTerm] = React.useState(
+  //   localStorage.getItem("search") || "React"
+  // );
 
-  React.useEffect(() => {
-    localStorage.setItem("search", searchTerm);
-  }, [searchTerm]);
+  //NOT USED - replace by custom hook
+  // React.useEffect(() => {
+  //   localStorage.setItem("search", searchTerm);
+  // }, [searchTerm]);
+
+  //Custom Hooks
+  const useSemiPersistentState = (key, initialState) => {
+    const [value, setValue] = React.useState(
+      localStorage.getItem(key) || initialState
+    );
+
+    React.useEffect(() => {
+      localStorage.setItem(key, value);
+    }, [value]);
+
+    return [value, setValue];
+  };
+
+  //Display custom hooks
+  const [searchTerm, setSearchTerm] = useSemiPersistentState("search", "React");
 
   const handleSearch = (event) => {
     console.log(event.target.value);
@@ -36,6 +54,7 @@ function App() {
   const searchedStories = stories.filter((story) =>
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
   //another way to filter
   // const searchedStories = stories.filter(function (story) {
   //   return story.title.includes(searchTerm);
