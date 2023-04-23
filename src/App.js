@@ -84,7 +84,8 @@ function Search(props) {
   };
 
   return (
-    <div>
+    //removing for fragments
+    <>
       <label htmlFor="search">Search: </label>
       <input
         id="search"
@@ -92,11 +93,11 @@ function Search(props) {
         value={props.search}
         onChange={handleChange}
       />
-
       <p>
         searching for <strong>{props.searchTerm}</strong>
       </p>
-    </div>
+      {/* removing for fragments */}
+    </>
   );
 }
 
