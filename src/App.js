@@ -66,10 +66,11 @@ function App() {
 
       <hr />
 
-      <Search
-        search={searchTerm}
-        onSearch={handleSearch}
-        searchTerm={searchTerm}
+      <InputWithLabel
+        id="search"
+        label="search"
+        value={searchTerm}
+        onInputChange={handleSearch}
       />
 
       <hr />
@@ -78,28 +79,17 @@ function App() {
   );
 }
 
-function Search(props) {
-  const handleChange = (event) => {
-    props.onSearch(event);
-  };
+const InputWithLabel = ({ id, label, value, type = "text", onInputChange }) => (
+  <>
+    <label htmlFor="id">{label} </label>
+    &nbsp;
+    <input id={id} type={type} value={value} onChange={onInputChange} />
+  </>
+);
 
-  return (
-    //removing for fragments
-    <>
-      <label htmlFor="search">Search: </label>
-      <input
-        id="search"
-        type="text"
-        value={props.search}
-        onChange={handleChange}
-      />
-      <p>
-        searching for <strong>{props.searchTerm}</strong>
-      </p>
-      {/* removing for fragments */}
-    </>
-  );
-}
+// const Search = (props) => {
+//   return <></>;
+// };
 
 function List(props) {
   return (
