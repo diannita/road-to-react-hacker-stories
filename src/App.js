@@ -85,14 +85,32 @@ const InputWithLabel = ({
   value,
   type = "text",
   onInputChange,
+  isFocus,
   children,
-}) => (
-  <>
-    <label htmlFor="id">{children} </label>
-    &nbsp;
-    <input id={id} type={type} value={value} onChange={onInputChange} />
-  </>
-);
+}) => {
+  const inputRef = React.useRef();
+
+  React.useEffect(() => {
+    if (isFocus) {
+      inputRef.current.focus();
+    }
+  }, [isFocus]);
+
+  return (
+    <>
+      <label htmlFor={id}>{children} </label>
+      &nbsp;
+      <input
+        ref={inputRef}
+        id={id}
+        type={type}
+        value={value}
+        onChange={onInputChange}
+        autoFocus
+      />
+    </>
+  );
+};
 
 // const Search = (props) => {
 //   return <></>;
