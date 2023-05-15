@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 
 const initialStories = [
   {
@@ -27,25 +27,11 @@ const initialStories = [
   },
 ];
 
-const getAsyncStories = () =>
-  new Promise((resolve) =>
-    setTimeout(() => resolve({ data: { stories: initialStories } }), 2000)
-  );
-
-const useSemiPersistentState = (key, initialState) => {
-  const [value, setValue] = React.useState(
-    localStorage.getItem(key) || initialState
-  );
-
-  React.useEffect(() => {
-    localStorage.setItem(key, value);
-  }, [value, key]);
-
-  return [value, setValue];
-};
-
+// definding the reducer - redux
 const storiesReducer = (state, action) => {
   switch (action.type) {
+    case "SET_STORIES":
+      return action.payload;
     case "STORIES_FETCH_INIT":
       return {
         ...state,
@@ -55,17 +41,20 @@ const storiesReducer = (state, action) => {
     case "STORIES_FETCH_SUCCESS":
       return {
         ...state,
-        isLoading: false,
+        isLoading: true,
         isError: false,
         data: action.payload,
       };
     case "STORIES_FETCH_FAILURE":
       return {
         ...state,
-        isLoading: false,
-        isError: true,
+        isLoading: true,
+        isError: false,
       };
     case "REMOVE_STORY":
+      return state.filter(
+        (story) => action.payload.objectID !== story.objectID
+      );
       return {
         ...state,
         data: state.data.filter(
@@ -78,6 +67,25 @@ const storiesReducer = (state, action) => {
 };
 
 const App = () => {
+  const getAsyncStories = () =>
+    new Promise((resolve) =>
+      setTimeout(() => resolve({ data: { stories: initialStories } }), 2000)
+    );
+
+  //Custom Hooks
+  const useSemiPersistentState = (key, initialState) => {
+    const [value, setValue] = React.useState(
+      localStorage.getItem(key) || initialState
+    );
+
+    React.useEffect(() => {
+      localStorage.setItem(key, value);
+    }, [value]);
+
+    return [value, setValue];
+  };
+
+  // states
   const [searchTerm, setSearchTerm] = useSemiPersistentState("search", "React");
 
   const [stories, dispatchStories] = React.useReducer(storiesReducer, {
@@ -87,6 +95,9 @@ const App = () => {
   });
 
   React.useEffect(() => {
+    // old
+    // setIsLoading(true);
+    // new redux
     dispatchStories({ type: "STORIES_FETCH_INIT" });
 
     getAsyncStories()
@@ -95,18 +106,27 @@ const App = () => {
           type: "STORIES_FETCH_SUCCESS",
           payload: result.data.stories,
         });
+
+        // setIsLoading(false);
       })
-      .catch(() => dispatchStories({ type: "STORIES_FETCH_FAILURE" }));
+      // old
+      // .catch(() => setIsError(true));
+      //new redux
+      .catch(() => dispatchStories({ type: "STORIES_FTECH_FAILURE" }));
   }, []);
 
   const handleRemoveStory = (item) => {
+    const newStories = stories.filter(
+      (story) => item.objectID !== story.objectID
+    );
     dispatchStories({
-      type: "REMOVE_STORY",
+      type: "REMOVE_STORIES",
       payload: item,
     });
   };
 
   const handleSearch = (event) => {
+    console.log(event.target.value);
     setSearchTerm(event.target.value);
   };
 
@@ -118,19 +138,18 @@ const App = () => {
     <div>
       <h1>My Hacker Stories</h1>
 
+      <hr />
+
       <InputWithLabel
         id="search"
         value={searchTerm}
-        isFocused
         onInputChange={handleSearch}
       >
-        <strong>Search:</strong>
+        <strong>Search:</strong> {/* Children */}
       </InputWithLabel>
-
       <hr />
 
-      {stories.isError && <p>Something went wrong ...</p>}
-
+      {stories.isError && <p> Something went wrong ...</p>}
       {stories.isLoading ? (
         <p>Loading ...</p>
       ) : (
@@ -145,20 +164,20 @@ const InputWithLabel = ({
   value,
   type = "text",
   onInputChange,
-  isFocused,
+  isFocus,
   children,
 }) => {
   const inputRef = React.useRef();
 
   React.useEffect(() => {
-    if (isFocused) {
+    if (isFocus) {
       inputRef.current.focus();
     }
-  }, [isFocused]);
+  }, [isFocus]);
 
   return (
     <>
-      <label htmlFor={id}>{children}</label>
+      <label htmlFor={id}>{children} </label>
       &nbsp;
       <input
         ref={inputRef}
@@ -166,10 +185,24 @@ const InputWithLabel = ({
         type={type}
         value={value}
         onChange={onInputChange}
+        autoFocus
       />
     </>
   );
 };
+
+// const List = (props) => {
+//   return (
+//     <div>
+//       <h2>{props.title}</h2>
+//       <ul>
+//         {props.list.map(function (item) {
+//           return <Item key={item.objectID} item={item} />;
+//         })}
+//       </ul>
+//     </div>
+//   );
+// };
 
 const List = ({ list, onRemoveItem }) =>
   list.map((item) => (
@@ -184,11 +217,10 @@ const Item = ({ item, onRemoveItem }) => (
     <span>{item.author}</span>
     <span>{item.num_comments}</span>
     <span>{item.points}</span>
+    &nbsp;&nbsp;
     <span>
-      {" "}
-      &nbsp;&nbsp;
       <button type="button" onClick={() => onRemoveItem(item)}>
-        Dismiss
+        Dissmiss
       </button>
     </span>
   </div>
