@@ -1,6 +1,5 @@
 import React from "react";
 
-// Fetching data for a third party
 const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?query=";
 
 const useSemiPersistentState = (key, initialState) => {
@@ -57,7 +56,8 @@ const App = () => {
     isError: false,
   });
 
-  React.useEffect(() => {
+  // Memoized Handler
+  const handleFetchStories = React.useCallback(() => {
     if (!searchTerm) return;
 
     dispatchStories({ type: "STORIES_FETCH_INIT" });
@@ -72,6 +72,10 @@ const App = () => {
       })
       .catch(() => dispatchStories({ type: "STORIES_FETCH_FAILURE" }));
   }, [searchTerm]);
+
+  React.useEffect(() => {
+    handleFetchStories();
+  }, [handleFetchStories]);
 
   const handleRemoveStory = (item) => {
     dispatchStories({
